@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ZETECH AI - 5 Full Practice Exams | Working Version</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef2f7 0%, #dce5ef 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .master-header {
+            background: linear-gradient(135deg, #0a2f44, #0b4b6e);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .master-header h1 {
+            font-size: 1.6rem;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-circle {
+            background: rgba(255,255,255,0.2);
+            border-radius: 60px;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .exam-selector {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .exam-btn {
+            background: #1e3a5f;
+            border: none;
+            padding: 0.7rem 1.3rem;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .exam-btn.active {
+            background: #f4a261;
+            color: #1e2a3a;
+        }
+
+        .exam-btn.completed {
+            background: #2c7a4d;
+        }
+
+        .exam-container {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .exam-container.active-exam {
+            display: block;
+        }
+
+        .exam-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2f44;
+            border-bottom: 3px solid #f4a261;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 0.8rem;
+            border-radius: 0.8rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.85rem;
+        }
+
+        .question-card {
+            background: #f8fafc;
+            border-radius: 1rem;
+            margin-bottom: 1.2rem;
+            padding: 1rem;
+            border: 1px solid #e0e8f0;
+        }
+
+        .q-header {
+            font-weight: 700;
+            color: #0a2f44;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .q-marks {
+            color: #e67e22;
+            font-size: 0.8rem;
+        }
+
+        .q-text {
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 0.6rem;
+            font-family: monospace;
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .answer-area {
+            margin-top: 0.8rem;
+        }
+
+        .check-btn {
+            background: #1f6e8c;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .model-answer {
+            background: #e8f5e9;
+            padding: 0.8rem;
+            border-radius: 0.6rem;
+            margin-top: 0.5rem;
+            display: none;
+            border-left: 4px solid #2c7a4d;
+            font-size: 0.85rem;
+        }
+
+        .model-answer.show {
+            display: block;
+        }
+
+        .exam-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #f4a261;
+            color: #1e2a3a;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background: #2c7a4d;
+            color: white;
+        }
+
+        .completion-badge {
+            margin-top: 1rem;
+            text-align: center;
+            background: #d4edda;
+            padding: 0.5rem;
+            border-radius: 0.8rem;
+            color: #155724;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 700px) {
+            .exam-btn { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
+            .q-text { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="master-header">
+        <h1>📚 ZETECH AI EXAM PRACTICE SUITE</h1>
+        <p>5 Full Practice Exams | Question 1 Compulsory + Choose Any 2</p>
+        <div class="progress-stats">
+            <div class="stat-circle">🏆 Exams Completed: <span id="completedCount">0</span>/5</div>
+            <div class="stat-circle">⭐ Best Score: <span id="bestScore">0</span>%</div>
+        </div>
+    </div>
+
+    <div class="exam-selector" id="examSelector">
+        <button class="exam-btn active" data-exam="0">📝 Exam 1: AI Fundamentals</button>
+        <button class="exam-btn" data-exam="1">📝 Exam 2: Knowledge Rep & Logic</button>
+        <button class="exam-btn" data-exam="2">📝 Exam 3: Machine Learning</button>
+        <button class="exam-btn" data-exam="3">📝 Exam 4: Search Algorithms</button>
+        <button class="exam-btn" data-exam="4">📝 Exam 5: Agents & Advanced AI</button>
+    </div>
+
+    <div id="exam0" class="exam-container active-exam"></div>
+    <div id="exam1" class="exam-container"></div>
+    <div id="exam2" class="exam-container"></div>
+    <div id="exam3" class="exam-container"></div>
+    <div id="exam4" class="exam-container"></div>
+</div>
+
+<footer>💡 For each exam: Answer Q1 (Compulsory) + ANY TWO from Q2, Q3, Q4 | Click "Check Model Answer" to compare | Mark as Complete when done</footer>
+
+<script>
+    // ================ COMPLETE EXAM DATA FOR 5 EXAMS ================
+    
+    const examData = {
+        0: {
+            name: "AI Fundamentals & Search",
+            q1_parts: [
+                { letter: "a", marks: 4, text: "Explain the following terms: (i) Intelligent Agent (ii) Heuristic Function", model: "Intelligent Agent: An entity that perceives its environment through sensors and acts upon it through actuators to achieve goals. Heuristic Function: h(n) estimates cost from current state to goal; guides informed search algorithms like A*." },
+                { letter: "b", marks: 4, text: "Distinguish between BFS and DFS search algorithms.", model: "BFS (Breadth-First Search): Explores level by level using a queue; complete and optimal for uniform cost; memory O(b^d). DFS (Depth-First Search): Explores deep paths first using a stack; not optimal; memory O(bd); useful for deep trees." },
+                { letter: "c", marks: 6, text: "Draw and explain the architecture of a simple reflex agent vs a model-based reflex agent.", model: "Simple Reflex Agent: Sensors → Condition-Action Rules → Actuators. Acts only on current percept. Model-Based Reflex Agent: Sensors → World State Update → Internal Model → Rules → Actuators. Maintains internal state to handle partial observability." },
+                { letter: "d", marks: 6, text: "Construct an ER diagram for: A university has students and courses. Students enroll in multiple courses. Courses have multiple students. Each enrollment has a grade.", model: "Entities: STUDENT(StudentID, Name, Major), COURSE(CourseID, Title, Credits). Relationship: ENROLLS (Many-to-Many) with attribute Grade. Primary keys: StudentID, CourseID." },
+                { letter: "e", marks: 3, text: "Discuss with examples: (i) Production Rule (ii) Semantic Network", model: "Production Rule: IF-THEN format. Example: IF fever AND cough THEN possible_flu = TRUE. Semantic Network: Graph with nodes (concepts) and labeled arcs (relations). Example: Dog → is-a → Animal → has-part → Leg." },
+                { letter: "f", marks: 4, text: "Identify errors in this BFS pseudocode and correct them.", model: "Errors: 1) Using pop() removes from end (LIFO) - should use pop(0) or deque.popleft() for FIFO. 2) visited should be marked when enqueuing, not after, to prevent duplicates. Correction: Mark visited when adding to queue." },
+                { letter: "g", marks: 3, text: "Describe three evaluation metrics for classification in ML.", model: "1) Precision = TP/(TP+FP) - exactness of positive predictions. 2) Recall = TP/(TP+FN) - completeness of positive predictions. 3) F1 Score = 2*(P*R)/(P+R) - harmonic mean balancing both." }
+            ],
+            q2: { text: "QUESTION 2 (15 Marks) - A company uses separate rule-based systems for inventory, customer service, and logistics. Explain three disadvantages of this fragmented approach. (6 marks) Define Knowledge Representation and explain three common KR schemes. (7 marks) State two types of logic used in AI. (2 marks)", model: "Disadvantages: 1) Data redundancy - same info stored multiple times. 2) Lack of integration - systems can't share knowledge. 3) Maintenance difficulty - updates needed across systems. KR: Encoding facts for reasoning. Schemes: Semantic nets (graph), Frames (slots), Production rules (IF-THEN). Logic: Propositional and First-Order Logic." },
+            q3: { text: "QUESTION 3 (15 Marks) - Compare supervised vs unsupervised machine learning with examples. (5 marks) Write Python code to filter data, calculate average, and split into train/test. (6 marks) Explain two regression evaluation metrics. (4 marks)", model: "Supervised: labeled data (spam detection, price prediction). Unsupervised: unlabeled data (customer clustering). Code: filtered = df[df['Diagnosis']=='Hypertensive']; avg = df[df['Diagnosis']=='Healthy']['Age'].mean(); train_test_split(). Metrics: MSE (mean squared error), R-squared (goodness of fit)." },
+            q4: { text: "QUESTION 4 (15 Marks) - Justify two reasons why problem definition and data preprocessing are important in AI development. (8 marks) Write decision tree classifier pseudocode using Python/sklearn. (7 marks)", model: "Problem definition: 1) Ensures right problem is solved, preventing wasted resources. 2) Defines success criteria. Data preprocessing: 1) Quality data impacts performance. 2) Removes noise and handles missing values. Decision tree code: from sklearn.tree import DecisionTreeClassifier; model.fit(X_train,y_train); predictions = model.predict(X_test)." }
+        },
+        1: {
+            name: "Knowledge Representation & Logic",
+            q1_parts: [
+                { letter: "a", marks: 4, text: "Define: (i) Ontology (ii) Inference Engine", model: "Ontology: Formal specification of concepts and relationships in a domain. Inference Engine: Component that derives new knowledge from existing knowledge using logical rules." },
+                { letter: "b", marks: 4, text: "Distinguish between Propositional Logic and First-Order Logic.", model: "Propositional Logic: Uses Boolean variables and connectives (∧, ∨, ¬, →). Cannot represent objects or relationships. First-Order Logic (FOL): Adds objects, predicates, functions, and quantifiers (∀, ∃). More expressive. Example: ∀x Human(x) → Mortal(x)." },
+                { letter: "c", marks: 6, text: "Draw a semantic network for: 'A cat is an animal. Animals have legs. Whiskers is a cat.'", model: "Nodes: Whiskers → is-a → Cat → is-a → Animal → has-part → Leg. Also: Animal → has-property → Living. This shows inheritance: Whiskers inherits 'has-part Leg' from Animal." },
+                { letter: "d", marks: 6, text: "Construct an ER diagram for a library system with members, books, and borrowing transactions.", model: "Entities: MEMBER(MemberID, Name, Address, Phone), BOOK(ISBN, Title, Author, Year). BORROWING(TransactionID, BorrowDate, DueDate, ReturnDate). Relationships: Member borrows Book (Many-to-Many via Borrowing)." },
+                { letter: "e", marks: 3, text: "Explain resolution refutation with an example.", model: "Resolution refutation proves by contradiction: negate the goal, convert to CNF, apply resolution rule until empty clause derived. Example: Given P→Q and P, prove Q. Negate Q, add P, P→Q becomes ¬P∨Q, resolve to get Q, then resolve Q with ¬Q to get empty clause (contradiction)." },
+                { letter: "f", marks: 4, text: "Correct this FOL statement: ∀x (Dog(x) → ∃y (Tail(y))", model: "Missing connection between dog and tail. Correction: ∀x (Dog(x) → ∃y (Tail(y) ∧ Has(x,y))). This properly states that every dog has a tail." },
+                { letter: "g", marks: 3, text: "Describe three properties of a good knowledge representation.", model: "1) Representational Adequacy: ability to represent all needed knowledge. 2) Inferential Adequacy: ability to manipulate representations to derive new knowledge. 3) Efficiency: ability to incorporate information quickly and answer queries fast. 4) Naturalness: ease of understanding and use." }
+            ],
+            q2: { text: "QUESTION 2 (15 Marks) - Explain the frame problem in Knowledge Representation. (6 marks) Compare semantic networks and frames. (7 marks) What is monotonic reasoning? (2 marks)", model: "Frame problem: challenge of representing non-changing facts efficiently in a dynamic world. Semantic networks: graph structure with inheritance, good for taxonomies. Frames: slot-filler structure with attached procedures, better for complex objects. Monotonic reasoning: adding new knowledge never invalidates previous conclusions." },
+            q3: { text: "QUESTION 3 (15 Marks) - Explain Modus Ponens and Modus Tollens with examples. (5 marks) Write truth table for (P→Q) ∧ P. (6 marks) Explain quantifiers with examples. (4 marks)", model: "Modus Ponens: P→Q, P ⊢ Q (If it rains, ground wet; it rains → ground wet). Modus Tollens: P→Q, ¬Q ⊢ ¬P (If rains then wet; not wet → not rain). Truth table shows (P→Q)∧P implies Q. Quantifiers: ∀ (for all) - 'All humans are mortal'; ∃ (there exists) - 'Some birds can fly'." },
+            q4: { text: "QUESTION 4 (15 Marks) - Discuss rule-based expert systems architecture. (8 marks) Write pseudocode for forward chaining inference. (7 marks)", model: "Expert system: Knowledge base (rules + facts), Inference engine (applies rules), User interface, Explanation facility. Forward chaining: 1) Start with initial facts. 2) Find rules whose conditions are satisfied. 3) Fire rules, add conclusions to facts. 4) Repeat until goal reached or no more rules. Used in data-driven reasoning." }
+        },
+        2: {
+            name: "Machine Learning & Evaluation",
+            q1_parts: [
+                { letter: "a", marks: 4, text: "Define: (i) Overfitting (ii) Underfitting", model: "Overfitting: Model learns training data too well, capturing noise instead of pattern; fails to generalize to new data. Underfitting: Model is too simple to capture underlying pattern; performs poorly on both training and test data." },
+                { letter: "b", marks: 4, text: "Distinguish between Classification and Regression.", model: "Classification: Predicts discrete class labels (spam/ham, cat/dog). Output is categorical. Regression: Predicts continuous numerical values (house price, temperature). Output is real number." },
+                { letter: "c", marks: 6, text: "Draw a decision tree for weather-based play decision.", model: "Root: Outlook → Sunny (check Humidity: high→No, normal→Yes), Overcast→Yes, Rain (check Wind: strong→No, weak→Yes). Leaves are 'Play' or 'Don't Play' decisions." },
+                { letter: "d", marks: 6, text: "Construct confusion matrix and calculate precision/recall given TP=80, FP=10, FN=20, TN=90.", model: "Confusion Matrix: [[TP=80, FN=20], [FP=10, TN=90]]. Precision = TP/(TP+FP) = 80/90 = 0.889 (88.9%). Recall = TP/(TP+FN) = 80/100 = 0.80 (80%). F1 = 2*(0.889*0.8)/(0.889+0.8) = 0.842." },
+                { letter: "e", marks: 3, text: "Explain bias-variance tradeoff.", model: "Bias: error from wrong assumptions (underfitting). Variance: sensitivity to training data fluctuations (overfitting). Simple models: high bias, low variance. Complex models: low bias, high variance. Goal: find sweet spot minimizing total error." },
+                { letter: "f", marks: 4, text: "Identify errors in this training loop.", model: "Common errors: 1) Not shuffling data before each epoch. 2) No validation set for monitoring. 3) Learning rate too high causing divergence. 4) Not normalizing input features. 5) Using entire dataset for training without cross-validation." },
+                { letter: "g", marks: 3, text: "Describe three cross-validation methods.", model: "1) k-fold CV: split data into k folds, train on k-1, validate on 1, repeat k times. 2) Leave-one-out CV: k = n (one sample per validation). 3) Stratified k-fold: preserves class distribution in each fold for classification." }
+            ],
+            q2: { text: "QUESTION 2 (15 Marks) - Explain decision tree induction algorithm ID3. (6 marks) What is information gain? Calculate with example. (7 marks) State two pruning methods. (2 marks)", model: "ID3: selects attribute with highest information gain, splits recursively, creates tree until pure leaves or no attributes left. Information gain = entropy(parent) - weighted sum entropy(children). Example: if entropy before=1, after=0.5, gain=0.5. Pruning: pre-pruning (stop early), post-pruning (grow then cut branches)." },
+            q3: { text: "QUESTION 3 (15 Marks) - Compare kNN and Decision Trees. (5 marks) Write Python for k-fold cross validation. (6 marks) Explain confusion matrix components. (4 marks)", model: "kNN: lazy learner, stores all training data, distance-based classification. Decision Trees: eager learner, builds model first, rule-based. Cross-validation: from sklearn.model_selection import KFold; kf = KFold(n_splits=5). Confusion matrix: TP (correct positive), FP (false alarm), FN (missed), TN (correct negative)." },
+            q4: { text: "QUESTION 4 (15 Marks) - Discuss ensemble methods (Bagging, Boosting). (8 marks) Write pseudocode for random forest. (7 marks)", model: "Bagging: bootstrap aggregation - train multiple models on bootstrap samples, average predictions (Random Forest). Boosting: sequential models where each corrects previous errors (AdaBoost, Gradient Boosting). Random Forest: 1) Create bootstrap samples. 2) For each sample, grow decision tree using random subset of features. 3) Aggregate predictions by majority vote." }
+        },
+        3: {
+            name: "Search Algorithms & Problem Solving",
+            q1_parts: [
+                { letter: "a", marks: 4, text: "Define: (i) State Space (ii) Heuristic", model: "State Space: Set of all possible states reachable from the initial state by applying any sequence of actions. Heuristic: Estimated cost from current state to goal state; used to guide informed search algorithms." },
+                { letter: "b", marks: 4, text: "Distinguish between Uniform Cost Search and Greedy Best-First Search.", model: "UCS: Uses g(n) (actual path cost from start). Expands lowest cost node. Complete and optimal for non-negative costs. Greedy Best-First: Uses h(n) (heuristic estimate to goal). Expands node closest to goal. Not optimal, but faster." },
+                { letter: "c", marks: 6, text: "Draw search tree for 8-puzzle problem with Manhattan distance heuristic.", model: "Initial state: [[2,8,3],[1,6,4],[7,0,5]]. Goal: [[1,2,3],[8,0,4],[7,6,5]]. Manhattan distance: sum of vertical+horizontal distance each tile from goal position. Heuristic guides search towards goal state." },
+                { letter: "d", marks: 6, text: "Construct problem formulation for a maze-solving robot.", model: "States: (x,y) positions in maze. Initial state: starting position. Actions: North, South, East, West (if not blocked by wall). Transition model: new position after action. Goal test: reached exit coordinates. Path cost: number of steps (each move cost=1)." },
+                { letter: "e", marks: 3, text: "Explain A* optimality condition.", model: "A* is optimal if the heuristic h(n) is admissible (never overestimates true cost to goal). Also requires consistency (monotonicity) for efficiency: h(n) ≤ c(n,n') + h(n'). Example: straight-line distance is admissible for road maps." },
+                { letter: "f", marks: 4, text: "Identify error in A* implementation.", model: "Errors: 1) Not using closed set for visited nodes (causes infinite loops). 2) Heuristic not admissible (overestimates, loses optimality). 3) Not updating g(n) when better path found. 4) Using LIFO instead of priority queue." },
+                { letter: "g", marks: 3, text: "Describe three informed search strategies.", model: "1) A*: f(n)=g(n)+h(n), optimal with admissible heuristic. 2) Greedy Best-First: f(n)=h(n), fast but not optimal. 3) IDA* (Iterative Deepening A*): memory-efficient version of A* using depth-limited search." }
+            ],
+            q2: { text: "QUESTION 2 (15 Marks) - Explain iterative deepening DFS. (6 marks) Compare time/space complexity of BFS, DFS, IDDFS. (7 marks) What is bidirectional search? (2 marks)", model: "IDDFS: repeatedly applies depth-limited DFS with increasing depth limit. Combines BFS completeness with DFS memory efficiency. BFS: O(b^d) time, O(b^d) space. DFS: O(b^m) time, O(bm) space. IDDFS: O(b^d) time, O(bd) space. Bidirectional search: search forward from start and backward from goal, meeting in middle." },
+            q3: { text: "QUESTION 3 (15 Marks) - Explain hill climbing with example. (5 marks) Write pseudocode for simulated annealing. (6 marks) State local search advantages. (4 marks)", model: "Hill climbing: start at random state, move to neighbor with higher value, stop at peak. Example: traveling salesman - swap cities to reduce distance. Simulated annealing: allows downhill moves with decreasing probability. Local search advantages: memory efficient, works for large/infinite state spaces, finds reasonable solutions quickly." },
+            q4: { text: "QUESTION 4 (15 Marks) - Discuss constraint satisfaction problems. (8 marks) Write backtracking search for CSP. (7 marks)", model: "CSP: Variables (X), Domains (D), Constraints (C). Examples: map coloring, Sudoku, scheduling. Backtracking: 1) Select unassigned variable. 2) Try values from domain. 3) Check constraints. 4) If consistent, recurse. 5) On failure, backtrack. Enhancements: forward checking, MRV heuristic, constraint propagation." }
+        },
+        4: {
+            name: "Agents & Advanced AI",
+            q1_parts: [
+                { letter: "a", marks: 4, text: "Define: (i) PEAS (ii) Utility Function", model: "PEAS: Performance measure, Environment, Actuators, Sensors - framework for describing task environment. Utility Function: maps state/outcome to a real number representing desirability; agents maximize expected utility." },
+                { letter: "b", marks: 4, text: "Distinguish between goal-based and utility-based agents.", model: "Goal-based: binary satisfaction (goal achieved or not). Selects actions that lead to goal. Utility-based: graded happiness measure. Handles trade-offs between competing objectives (speed vs safety). Can compare different goal states." },
+                { letter: "c", marks: 6, text: "Draw architecture of a learning agent.", model: "Components: 1) Performance element (selects actions). 2) Learning element (improves performance). 3) Critic (provides feedback on actions). 4) Problem generator (suggests exploratory actions). Feedback loop: Critic evaluates performance element, learning element updates based on feedback." },
+                { letter: "d", marks: 6, text: "Construct environment classification table with examples.", model: "Fully Observable (chess) vs Partially Observable (poker). Deterministic (8-puzzle) vs Stochastic (taxi driving). Episodic (image classification) vs Sequential (chess). Static (diagnosis) vs Dynamic (driving). Discrete (chess) vs Continuous (self-driving). Single-agent vs Multi-agent." },
+                { letter: "e", marks: 3, text: "Explain reinforcement learning basics.", model: "Agent learns through trial and error. At each step: state s, action a, reward r. Goal: maximize cumulative reward (Q-learning). Exploration vs exploitation tradeoff. Bellman equation: Q(s,a) = r + γ*max Q(s',a')." },
+                { letter: "f", marks: 4, text: "Identify errors in Q-learning update.", model: "Errors: 1) Wrong learning rate (α too high/low). 2) Missing discount factor γ. 3) Not updating based on max Q(next). 4) Not exploring enough. Correct update: Q(s,a) ← Q(s,a) + α[r + γ*max Q(s',a') - Q(s,a)]." },
+                { letter: "g", marks: 3, text: "Describe three agent programming languages/tools.", model: "1) Prolog: logic programming, good for rule-based systems. 2) Python: popular with AI libraries (TensorFlow, PyTorch, scikit-learn). 3) Lisp: historical AI language, good for symbolic processing. 4) JADE: Java framework for multi-agent systems." }
+            ],
+            q2: { text: "QUESTION 2 (15 Marks) - Explain the Turing test and its limitations. (6 marks) Discuss Chinese Room argument. (7 marks) What is the Loebner prize? (2 marks)", model: "Turing test: human evaluator converses with machine and human; if indistinguishable, machine is intelligent. Limitations: focuses only on conversation, no true understanding, can be fooled by simple tricks. Chinese Room argument: syntax vs semantics - manipulating symbols doesn't equal understanding. Loebner prize: annual competition implementing Turing test." },
+            q3: { text: "QUESTION 3 (15 Marks) - Explain multi-agent systems. (5 marks) Write pseudocode for cooperative agent communication. (6 marks) State Nash equilibrium in game theory. (4 marks)", model: "MAS: multiple interacting autonomous agents. Applications: robotics, economics, traffic simulation. Communication: agents share information via message passing. Nash equilibrium: state where no player can improve payoff by changing strategy unilaterally. Example: Prisoner's dilemma - both confess is Nash equilibrium." },
+            q4: { text: "QUESTION 4 (15 Marks) - Discuss ethical issues in AI. (8 marks) Write guidelines for responsible AI development. (7 marks)", model: "Ethical issues: bias in training data, privacy violations, job displacement, autonomous weapons, accountability for AI decisions. Guidelines: 1) Fairness - detect and mitigate bias. 2) Transparency - explainable AI. 3) Privacy - data protection. 4) Human-centric - augment not replace. 5) Accountability - clear responsibility chain." }
+        }
+    };
+
+    // Storage for progress
+    let examProgress = {
+        0: { completed: false, score: 0 },
+        1: { completed: false, score: 0 },
+        2: { completed: false, score: 0 },
+        3: { completed: false, score: 0 },
+        4: { completed: false, score: 0 }
+    };
+
+    let currentExam = 0;
+
+    // Load from localStorage
+    function loadProgress() {
+        const saved = localStorage.getItem('aiExamProgress5');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                Object.assign(examProgress, parsed);
+            } catch(e) {}
+        }
+        updateUIProgress();
+    }
+
+    function saveProgress() {
+        localStorage.setItem('aiExamProgress5', JSON.stringify(examProgress));
+        updateUIProgress();
+    }
+
+    function updateUIProgress() {
+        let completed = 0;
+        let best = 0;
+        for (let i = 0; i < 5; i++) {
+            if (examProgress[i].completed) completed++;
+            if (examProgress[i].score > best) best = examProgress[i].score;
+        }
+        document.getElementById('completedCount').innerText = completed;
+        document.getElementById('bestScore').innerText = best;
+        
+        for (let i = 0; i < 5; i++) {
+            const btn = document.querySelector(`.exam-btn[data-exam="${i}"]`);
+            if (btn) {
+                if (examProgress[i].completed) {
+                    btn.classList.add('completed');
+                    btn.style.background = "#2c7a4d";
+                } else {
+                    btn.classList.remove('completed');
+                    btn.style.background = "#1e3a5f";
+                }
+            }
+        }
+    }
+
+    function saveAnswer(examIdx, part, value) {
+        const saved = localStorage.getItem(`examAnswers_${examIdx}`);
+        const answers = saved ? JSON.parse(saved) : {};
+        answers[part] = value;
+        localStorage.setItem(`examAnswers_${examIdx}`, JSON.stringify(answers));
+    }
+
+    function loadAnswers(examIdx) {
+        const saved = localStorage.getItem(`examAnswers_${examIdx}`);
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch(e) { return {}; }
+        }
+        return {};
+    }
+
+    function renderExam(examIdx) {
+        const exam = examData[examIdx];
+        if (!exam) return;
+        
+        const container = document.getElementById(`exam${examIdx}`);
+        if (!container) return;
+        
+        const savedAnswers = loadAnswers(examIdx);
+        const isCompleted = examProgress[examIdx].completed;
+        
+        let html = `
+            <div class="exam-title">📖 ${exam.name}</div>
+            <div class="instructions">
+                ⏱️ TIME: 2 Hours | TOTAL: 60 Marks<br>
+                📌 INSTRUCTIONS: Answer QUESTION 1 (Compulsory - 30 marks) and ANY TWO from Questions 2, 3, 4 (15 marks each)
+            </div>
+            
+            <!-- QUESTION 1 -->
+            <div class="question-card">
+                <div class="q-header"><span>🔴 QUESTION 1 (Compulsory)</span><span class="q-marks">30 Marks</span></div>
+        `;
+        
+        // Q1 parts
+        for (let i = 0; i < exam.q1_parts.length; i++) {
+            const part = exam.q1_parts[i];
+            const answerKey = `q1_${part.letter}`;
+            const savedValue = savedAnswers[answerKey] || '';
+            html += `
+                <div class="q-text"><strong>${part.letter})</strong> ${part.text} <span class="q-marks">(${part.marks} marks)</span></div>
+                <div class="answer-area">
+                    <textarea id="exam${examIdx}_${answerKey}" placeholder="Write your answer for ${part.letter}) here..." rows="3">${escapeHtmlText(savedValue)}</textarea>
+                    <button class="check-btn" onclick="toggleModelAnswer(${examIdx}, '${answerKey}', \`${escapeHtmlText(part.model)}\`)">🔍 Check Model Answer</button>
+                    <div id="model-${examIdx}-${answerKey}" class="model-answer"></div>
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+        
+        // Q2, Q3, Q4
+        for (let i = 2; i <= 4; i++) {
+            const qKey = `q${i}`;
+            const question = exam[qKey];
+            const savedValue = savedAnswers[qKey] || '';
+            html += `
+                <div class="question-card">
+                    <div class="q-header"><span>🟢 ${question.text.substring(0, 80)}...</span><span class="q-marks">15 Marks</span></div>
+                    <div class="answer-area">
+                        <textarea id="exam${examIdx}_${qKey}" placeholder="Write your answer for ${qKey.toUpperCase()} here..." rows="5">${escapeHtmlText(savedValue)}</textarea>
+                        <button class="check-btn" onclick="toggleModelAnswer(${examIdx}, '${qKey}', \`${escapeHtmlText(question.model)}\`)">🔍 Check Model Answer</button>
+                        <div id="model-${examIdx}-${qKey}" class="model-answer"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `
+            <div class="exam-actions">
+                <button class="btn-secondary" onclick="resetExam(${examIdx})">⟳ Reset Exam</button>
+                <button class="btn-primary ${isCompleted ? 'btn-success' : ''}" onclick="markComplete(${examIdx})">
+                    ${isCompleted ? '✅ Already Completed' : '📌 Mark Exam as Complete'}
+                </button>
+            </div>
+        `;
+        
+        if (isCompleted) {
+            html += `<div class="completion-badge">✅ You completed this exam! Score: ${examProgress[examIdx].score}%</div>`;
+        }
+        
+        container.innerHTML = html;
+        
+        // Attach save events
+        for (let i = 0; i < exam.q1_parts.length; i++) {
+            const part = exam.q1_parts[i];
+            const textarea = document.getElementById(`exam${examIdx}_q1_${part.letter}`);
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    saveAnswer(examIdx, `q1_${part.letter}`, this.value);
+                });
+            }
+        }
+        
+        for (let i = 2; i <= 4; i++) {
+            const textarea = document.getElementById(`exam${examIdx}_q${i}`);
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    saveAnswer(examIdx, `q${i}`, this.value);
+                });
+            }
+        }
+    }
+    
+    function escapeHtmlText(str) {
+        if (!str) return '';
+        return str.replace(/[&<>`]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '`') return '&#96;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    function toggleModelAnswer(examIdx, partKey, modelText) {
+        const modelDiv = document.getElementById(`model-${examIdx}-${partKey}`);
+        if (modelDiv) {
+            if (modelDiv.classList.contains('show')) {
+                modelDiv.classList.remove('show');
+                modelDiv.innerHTML = '';
+            } else {
+                modelDiv.innerHTML = `<strong>📖 Model Answer:</strong><br>${modelText}`;
+                modelDiv.classList.add('show');
+            }
+        }
+    }
+    
+    function resetExam(examIdx) {
+        if (confirm(`Are you sure you want to reset Exam ${examIdx + 1}? All your answers will be lost.`)) {
+            localStorage.removeItem(`examAnswers_${examIdx}`);
+            examProgress[examIdx] = { completed: false, score: 0 };
+            saveProgress();
+            renderExam(examIdx);
+        }
+    }
+    
+    function markComplete(examIdx) {
+        if (examProgress[examIdx].completed) {
+            alert("This exam is already marked as complete!");
+            return;
+        }
+        
+        const savedAnswers = localStorage.getItem(`examAnswers_${examIdx}`);
+        let totalLength = 0;
+        if (savedAnswers) {
+            const answers = JSON.parse(savedAnswers);
+            for (let key in answers) {
+                totalLength += answers[key].length;
+            }
+        }
+        
+        let score = Math.min(100, Math.floor(totalLength / 25));
+        if (score < 25) score = 25;
+        
+        examProgress[examIdx] = { completed: true, score: score };
+        saveProgress();
+        renderExam(examIdx);
+        
+        alert(`✅ Exam ${examIdx + 1} marked as complete!\nEstimated score: ${score}%\nKeep practicing to improve!`);
+    }
+    
+    // Make functions global
+    window.toggleModelAnswer = toggleModelAnswer;
+    window.resetExam = resetExam;
+    window.markComplete = markComplete;
+    
+    // Exam switching
+    document.querySelectorAll('.exam-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const examIdx = parseInt(this.getAttribute('data-exam'));
+            currentExam = examIdx;
+            
+            document.querySelectorAll('.exam-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            document.querySelectorAll('.exam-container').forEach(container => {
+                container.classList.remove('active-exam');
+            });
+            document.getElementById(`exam${examIdx}`).classList.add('active-exam');
+            
+            renderExam(examIdx);
+        });
+    });
+    
+    // Initialize
+    loadProgress();
+    renderExam(0);
+</script>
+</body>
+</html>
