@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Symbols Reference | Logic, Quantifiers, Sets, Probability, Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #e0e8f2 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0a2f44, #0b4b6e);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            margin-top: 0.3rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Filter buttons */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            background: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e3a5f;
+        }
+
+        .filter-btn.active {
+            background: #f4a261;
+            color: #1e2a3a;
+        }
+
+        /* Symbol grid */
+        .symbol-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Symbol card */
+        .symbol-card {
+            background: white;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .symbol-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .symbol-display {
+            background: #1e2f3f;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            border-bottom: 3px solid #f4a261;
+        }
+
+        .symbol-content {
+            padding: 1.2rem;
+        }
+
+        .symbol-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0a2f44;
+            margin-bottom: 0.5rem;
+        }
+
+        .symbol-meaning {
+            font-size: 0.9rem;
+            color: #2c3e4e;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .usage-section {
+            background: #f8fafc;
+            border-radius: 0.8rem;
+            padding: 0.7rem;
+            margin: 0.7rem 0;
+        }
+
+        .usage-label {
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #1f6e8c;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .example-text {
+            background: #eef2fa;
+            padding: 0.6rem;
+            border-radius: 0.6rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin: 0.5rem 0;
+            overflow-x: auto;
+        }
+
+        .ai-context {
+            background: #fff3df;
+            padding: 0.7rem;
+            border-radius: 0.8rem;
+            font-size: 0.85rem;
+            border-left: 3px solid #f4a261;
+            margin-top: 0.6rem;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #eef2fa;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: #1f6e8c;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 1.5rem;
+            color: #6c757d;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔣 AI Symbol Reference Guide</h1>
+        <p>Logic | Quantifiers | Set Theory | Probability | Search & Heuristics</p>
+        <div class="stats">
+            <div class="stat">📐 45+ Symbols</div>
+            <div class="stat">📖 Examples Included</div>
+            <div class="stat">🧠 Exam Ready</div>
+        </div>
+    </div>
+
+    <div class="filter-bar" id="filterBar"></div>
+    <div id="symbolGrid" class="symbol-grid"></div>
+    <footer>💡 Click any filter to browse by category. Each card includes meaning, usage, example, and AI context.</footer>
+</div>
+
+<script>
+    // ==================== SYMBOL DATABASE ====================
+    const symbols = [
+        // LOGIC CONNECTIVES
+        { symbol: "∧", name: "Logical AND (Conjunction)", category: "logic", meaning: "True only when BOTH propositions are true.", usage: "Combining conditions in rules and knowledge bases.", example: "P = 'It is raining', Q = 'Cold' → P ∧ Q means both rain AND cold.", aiContext: "Used in production rules: IF (temp < 20 ∧ humidity > 80) THEN activate_heater." },
+        { symbol: "∨", name: "Logical OR (Disjunction)", category: "logic", meaning: "True if AT LEAST ONE proposition is true.", usage: "Inclusive OR in logic programming and constraints.", example: "P ∨ Q : 'Either user clicks OR timeout occurs'", aiContext: "SAT solving: clause (x1 ∨ ¬x2 ∨ x3) must be satisfied." },
+        { symbol: "¬", name: "Negation (NOT)", category: "logic", meaning: "Flips truth value: ¬True = False, ¬False = True.", usage: "Representing absence or contradiction.", example: "¬Rain → 'It is NOT raining'", aiContext: "Negation in FOL: ¬∃x P(x) ≡ ∀x ¬P(x). Used in resolution refutation." },
+        { symbol: "→", name: "Implication (IF...THEN)", category: "logic", meaning: "P → Q means if P is true then Q must be true.", usage: "Rules, causal relationships, reasoning.", example: "Rain → WetGround", aiContext: "Expert systems: IF fever AND cough THEN flu." },
+        { symbol: "↔", name: "Biconditional (iff)", category: "logic", meaning: "True when both sides have SAME truth value.", usage: "Definitions, logical equivalence.", example: "Integer is even ↔ divisible by 2", aiContext: "Defining concepts in ontologies: 'Bachelor ↔ unmarried man'." },
+        { symbol: "⊕", name: "XOR (Exclusive OR)", category: "logic", meaning: "True when EXACTLY ONE operand is true.", usage: "Parity, mutual exclusion constraints.", example: "Alice ⊕ Bob : exactly one will attend.", aiContext: "Constraint satisfaction: exactly-one constraints." },
+        { symbol: "⊨", name: "Logical Entailment", category: "logic", meaning: "KB ⊨ α means knowledge base entails α.", usage: "Inference, logical consequence checking.", example: "{(P→Q), P} ⊨ Q", aiContext: "Checking if query follows from knowledge base." },
+        { symbol: "⊢", name: "Provability", category: "logic", meaning: "KB ⊢ α means α can be derived using inference rules.", usage: "Proof theory, resolution theorem proving.", example: "Modus ponens: {P→Q, P} ⊢ Q", aiContext: "Used in Prolog and automated theorem provers." },
+
+        // QUANTIFIERS
+        { symbol: "∀", name: "Universal Quantifier (For all)", category: "quantifiers", meaning: "The statement holds for EVERY element in the domain.", usage: "General rules, axioms, domain knowledge.", example: "∀x (Cat(x) → Mammal(x)) : All cats are mammals.", aiContext: "Representing: '∀x Student(x) → Person(x)' in semantic nets." },
+        { symbol: "∃", name: "Existential Quantifier (There exists)", category: "quantifiers", meaning: "There is AT LEAST ONE element satisfying the property.", usage: "Existence assertions, planning.", example: "∃x (Dog(x) ∧ Brown(x)) : There exists a brown dog.", aiContext: "Planning: ∃a (Action(a) ∧ Result(a, goal))." },
+        { symbol: "∄", name: "There does not exist", category: "quantifiers", meaning: "No element satisfies the property (¬∃).", usage: "Negative existence, closed world assumption.", example: "∄x (Unicorn(x))", aiContext: "Closed-world assumption in databases." },
+        { symbol: "∃!", name: "Unique existence", category: "quantifiers", meaning: "There exists EXACTLY ONE element.", usage: "Functional relationships, keys.", example: "∃!x (PresidentOf(x, USA))", aiContext: "Key constraints in knowledge graphs and databases." },
+
+        // SET THEORY
+        { symbol: "∈", name: "Element of", category: "sets", meaning: "x ∈ A means x belongs to set A.", usage: "Membership, state space definition.", example: "s ∈ States", aiContext: "Agent state: 'current_state ∈ ValidStates'." },
+        { symbol: "∉", name: "Not an element of", category: "sets", meaning: "x is NOT in set A.", usage: "Exclusion, pruning.", example: "dead_state ∉ ActiveStates", aiContext: "Prune nodes not in promising set." },
+        { symbol: "⊆", name: "Subset", category: "sets", meaning: "Every element of A is also in B.", usage: "Hierarchies, concept inclusion.", example: "{a, b} ⊆ {a, b, c}", aiContext: "Taxonomies: Mammal ⊆ Animal." },
+        { symbol: "⊂", name: "Proper subset", category: "sets", meaning: "A ⊆ B but A ≠ B.", usage: "Strict containment.", example: "{cat} ⊂ {cat, dog}", aiContext: "Ontology: 'Dog ⊂ Canine'." },
+        { symbol: "∪", name: "Union", category: "sets", meaning: "Set of elements in A OR B.", usage: "Combining sets, merging knowledge.", example: "S1 ∪ S2 = {x | x∈S1 ∨ x∈S2}", aiContext: "Merging knowledge bases or search frontiers." },
+        { symbol: "∩", name: "Intersection", category: "sets", meaning: "Elements in BOTH A and B.", usage: "Common features, constraint intersection.", example: "Active ∩ Completed = ∅", aiContext: "Variable domain intersection in CSP." },
+        { symbol: "∅", name: "Empty set", category: "sets", meaning: "Set with NO elements.", usage: "No solution, contradiction.", example: "No solution → frontier = ∅", aiContext: "Resolution refutation yields empty clause." },
+        { symbol: "|A|", name: "Cardinality", category: "sets", meaning: "Number of elements in set A.", usage: "Complexity, branching factor.", example: "|Domain| = 10", aiContext: "Search space size: |States|." },
+
+        // PROBABILITY & STATISTICS
+        { symbol: "P(A)", name: "Probability of A", category: "probability", meaning: "Likelihood event A occurs (0 to 1).", usage: "Uncertainty, Bayesian inference.", example: "P(Rain) = 0.3", aiContext: "Naive Bayes: P(Spam | words)." },
+        { symbol: "P(A|B)", name: "Conditional Probability", category: "probability", meaning: "Probability of A given B occurred.", usage: "Bayesian networks, inference.", example: "P(Wet | Rain) = 0.95", aiContext: "Bayes rule: P(θ|D) = P(D|θ)P(θ)/P(D)." },
+        { symbol: "E[X]", name: "Expected Value", category: "probability", meaning: "Weighted average of random variable X.", usage: "Utility theory, reinforcement learning.", example: "E[Reward] = Σ r·P(r)", aiContext: "Expected utility: EU(a) = Σ P(s'|a) U(s')." },
+        { symbol: "Var(X)", name: "Variance", category: "probability", meaning: "Measure of spread: E[(X-μ)²].", usage: "Model uncertainty, bias-variance.", example: "High variance → overfitting", aiContext: "Bias-variance tradeoff in ML." },
+        { symbol: "σ", name: "Standard Deviation", category: "probability", meaning: "Square root of variance.", usage: "Confidence intervals, feature scaling.", example: "Mean ± σ", aiContext: "Feature standardization: (x-μ)/σ." },
+        { symbol: "⊥", name: "Independence", category: "probability", meaning: "A ⟂ B means P(A∧B) = P(A)P(B).", usage: "Conditional independence.", example: "Weather ⟂ StockMarket", aiContext: "Naive Bayes assumes features independent given class." },
+        { symbol: "∑", name: "Summation", category: "probability", meaning: "Sum over index i.", usage: "Total probability, loss functions.", example: "∑_{i=1}^{n} x_i", aiContext: "MSE loss = (1/n)∑(y_i - ŷ_i)²." },
+        { symbol: "∏", name: "Product", category: "probability", meaning: "Multiply over elements.", usage: "Joint probability, likelihood.", example: "∏ P(x_i|θ)", aiContext: "Maximum likelihood: L(θ) = ∏ P(x_i|θ)." },
+
+        // SEARCH & HEURISTICS
+        { symbol: "g(n)", name: "Path cost from start", category: "search", meaning: "Actual cost from initial state to node n.", usage: "A*, Uniform Cost Search.", example: "g(n) = sum of step costs", aiContext: "A* evaluation: f(n) = g(n) + h(n)." },
+        { symbol: "h(n)", name: "Heuristic function", category: "search", meaning: "Estimated cost from n to goal.", usage: "Informed search algorithms.", example: "h(n) = Manhattan distance", aiContext: "Admissible heuristic never overestimates true cost." },
+        { symbol: "f(n)", name: "Evaluation function", category: "search", meaning: "f(n) = g(n) + h(n) in A*.", usage: "Priority queue ordering.", example: "Node with lowest f expanded first.", aiContext: "A* optimal if heuristic is admissible." },
+        { symbol: "d", name: "Depth of node", category: "search", meaning: "Number of steps from root.", usage: "Complexity analysis.", example: "root depth = 0", aiContext: "Time complexity BFS: O(b^d)." },
+        { symbol: "b", name: "Branching factor", category: "search", meaning: "Maximum children per node.", usage: "Complexity analysis.", example: "b = 2 for binary tree.", aiContext: "Effective branching factor measures heuristic quality." },
+        { symbol: "*", name: "Optimal solution", category: "search", meaning: "A* finds optimal path.", usage: "Optimality notation.", example: "A* with admissible h → optimal", aiContext: "Optimality condition for A*." },
+
+        // ADDITIONAL MATH
+        { symbol: "≡", name: "Logical equivalence", category: "math", meaning: "Two expressions always have same truth value.", usage: "Simplifying knowledge bases.", example: "P→Q ≡ ¬P ∨ Q", aiContext: "CNF conversion for resolution theorem proving." },
+        { symbol: "≔", name: "Definition / Assignment", category: "math", meaning: "Defined as / assignment.", usage: "Algorithm pseudocode.", example: "frontier ≔ priority queue", aiContext: "AI pseudocode for search algorithms." },
+        { symbol: "≠", name: "Not equal", category: "math", meaning: "Values are different.", usage: "Constraints, conditions.", example: "x ≠ y in CSP", aiContext: "Constraint propagation: alldifferent({x,y,z})." },
+        { symbol: "∇", name: "Gradient", category: "math", meaning: "Vector of partial derivatives.", usage: "Optimization, backpropagation.", example: "∇L(θ) = ∂L/∂θ", aiContext: "Gradient descent: θ ← θ - α∇L(θ)." },
+        { symbol: "θ", name: "Model parameters", category: "math", meaning: "Parameters of ML model.", usage: "Learning, estimation.", example: "θ = [w₀, w₁, ..., wₙ]", aiContext: "Linear regression: y = θ₀ + θ₁x." },
+        { symbol: "α", name: "Learning rate", category: "math", meaning: "Step size in gradient descent.", usage: "Training neural networks.", example: "α = 0.001", aiContext: "Controls convergence speed in ML." },
+        { symbol: "λ", name: "Regularization parameter", category: "math", meaning: "Controls strength of penalty.", usage: "Prevent overfitting.", example: "L2 loss: MSE + λ||θ||²", aiContext: "Tuned via cross-validation." }
+    ];
+
+    // Get unique categories
+    const categories = ["all", ...new Set(symbols.map(s => s.category))];
+    let activeCategory = "all";
+
+    // Render filter buttons
+    function renderFilters() {
+        const filterBar = document.getElementById("filterBar");
+        filterBar.innerHTML = categories.map(cat => {
+            let displayName = cat;
+            if (cat === "all") displayName = "🔁 All Symbols";
+            else if (cat === "logic") displayName = "🧠 Logic & Connectives";
+            else if (cat === "quantifiers") displayName = "🎯 Quantifiers";
+            else if (cat === "sets") displayName = "📊 Set Theory";
+            else if (cat === "probability") displayName = "📈 Probability & Stats";
+            else if (cat === "search") displayName = "🔍 Search & Heuristics";
+            else if (cat === "math") displayName = "📐 Math & Relations";
+            return `<button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${displayName}</button>`;
+        }).join("");
+
+        // Add event listeners
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                activeCategory = this.getAttribute("data-category");
+                renderFilters();
+                renderSymbols();
+            });
+        });
+    }
+
+    // Render symbols grid
+    function renderSymbols() {
+        const grid = document.getElementById("symbolGrid");
+        let filtered = symbols;
+        if (activeCategory !== "all") {
+            filtered = symbols.filter(s => s.category === activeCategory);
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="no-results">✨ No symbols in this category. Try another tab! ✨</div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(s => `
+            <div class="symbol-card">
+                <div class="symbol-display">${escapeHtml(s.symbol)}</div>
+                <div class="symbol-content">
+                    <div class="symbol-name">${escapeHtml(s.name)}</div>
+                    <div class="category-tag">📁 ${s.category.toUpperCase()}</div>
+                    <div class="symbol-meaning"><strong>📖 Meaning:</strong> ${escapeHtml(s.meaning)}</div>
+                    <div class="usage-section">
+                        <div class="usage-label">🔧 AI USAGE</div>
+                        <div>${escapeHtml(s.usage)}</div>
+                        <div class="example-text"><strong>📌 Example:</strong> ${escapeHtml(s.example)}</div>
+                    </div>
+                    <div class="ai-context">
+                        <strong>🧠 Exam / Real-world context:</strong><br> ${escapeHtml(s.aiContext)}
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // Initialize
+    renderFilters();
+    renderSymbols();
+</script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Exam Prep: Differentiate, Explain & Apply | 5+ Points Each</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #e0e8f2 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .app-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .hero {
+            background: linear-gradient(135deg, #0a2f44, #0b4b6e);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+        }
+
+        .hero p {
+            opacity: 0.9;
+            margin-top: 0.3rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Filter tabs */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            background: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e3a5f;
+        }
+
+        .filter-btn.active {
+            background: #f4a261;
+            color: #1e2a3a;
+        }
+
+        /* Question grid */
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card styling */
+        .question-card {
+            background: white;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .question-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            background: #1e2f3f;
+            color: white;
+            padding: 1rem;
+            font-weight: 700;
+            border-left: 5px solid #f4a261;
+        }
+
+        .question-type {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            margin-top: 0.3rem;
+        }
+
+        .card-body {
+            padding: 1.2rem;
+        }
+
+        .points-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+
+        .question-card.expanded .points-container {
+            max-height: 800px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .point-list {
+            list-style: none;
+            margin: 0.5rem 0;
+        }
+
+        .point-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eef2f7;
+            display: flex;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .point-num {
+            background: #f4a261;
+            color: #1e2a3a;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .application-box {
+            background: #eef2fa;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+            border-left: 4px solid #2c7a4d;
+        }
+
+        .application-title {
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #2c7a4d;
+            text-transform: uppercase;
+        }
+
+        .expand-hint {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin-top: 0.8rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed #dee2e6;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #eef2fa;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-bottom: 0.5rem;
+            color: #1f6e8c;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 700px) {
+            .question-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="hero">
+        <h1>📝 AI Exam Prep: Differentiate, Explain & Apply</h1>
+        <p>Each concept includes 5+ key points + real-world application / example</p>
+        <div class="stats">
+            <div class="stat-badge">🎯 25+ high-yield topics</div>
+            <div class="stat-badge">📌 5+ points each</div>
+            <div class="stat-badge">🧠 Click to expand</div>
+        </div>
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-category="all">📚 All Topics</button>
+        <button class="filter-btn" data-category="agents">🤖 Agents & PEAS</button>
+        <button class="filter-btn" data-category="search">🔍 Search & Heuristics</button>
+        <button class="filter-btn" data-category="kr">📚 Knowledge Rep</button>
+        <button class="filter-btn" data-category="logic">🔣 Logic & Reasoning</button>
+        <button class="filter-btn" data-category="ml">📊 Machine Learning</button>
+        <button class="filter-btn" data-category="compare">⚖️ Compare/Contrast</button>
+    </div>
+
+    <div id="questionsGrid" class="question-grid"></div>
+    <footer>💡 Click any card to expand and see detailed points + application. Perfect for exam "Discuss" and "Explain" questions.</footer>
+</div>
+
+<script>
+    // ==================== QUESTION DATABASE (EACH WITH 5+ POINTS + APPLICATION) ====================
+    const questionsData = [
+        { 
+            id: 1, category: "agents", type: "Explain", 
+            title: "Explain the concept of an Intelligent Agent and its role in AI.",
+            points: [
+                "An intelligent agent perceives its environment through sensors and acts upon it through actuators.",
+                "Agents operate based on the PEAS framework: Performance measure, Environment, Actuators, Sensors.",
+                "Rational agents always choose actions that maximize expected performance measure given percept history.",
+                "Agents can be classified as simple reflex, model-based, goal-based, or utility-based depending on complexity.",
+                "Learning agents improve over time using a critic, learning element, and problem generator.",
+                "Agent behavior is determined by the agent function mapping percept sequences to actions."
+            ],
+            application: "Real-world application: Self-driving car (Tesla Autopilot) uses cameras/sensors (percepts) to decide steering/braking (actions) to maximize safety and efficiency."
+        },
+        { 
+            id: 2, category: "agents", type: "Differentiate", 
+            title: "Differentiate between Simple Reflex Agent and Model-Based Reflex Agent.",
+            points: [
+                "Simple reflex acts only on current percept; model-based maintains internal state for partial observability.",
+                "Simple reflex uses condition-action rules; model-based updates a world model to track unobserved aspects.",
+                "Simple reflex cannot handle environments with hidden information; model-based can reason about invisible factors.",
+                "Simple reflex has no memory; model-based has memory of past states to inform decisions.",
+                "Examples: Simple reflex → thermostat; Model-based → robot vacuum that remembers cleaned rooms.",
+                "Model-based agents are more robust in dynamic, partially observable environments."
+            ],
+            application: "Vacuum cleaning robot: simple reflex would randomly move; model-based tracks which rooms are already cleaned, improving efficiency by 40%."
+        },
+        { 
+            id: 3, category: "compare", type: "Differentiate", 
+            title: "Differentiate between BFS (Breadth-First Search) and DFS (Depth-First Search).",
+            points: [
+                "BFS uses a queue (FIFO); DFS uses a stack (LIFO) for frontier management.",
+                "BFS explores level by level; DFS goes deep along one branch before backtracking.",
+                "BFS is complete and optimal for uniform step costs; DFS is not optimal and may not be complete in infinite spaces.",
+                "BFS memory complexity O(b^d); DFS memory complexity O(bm) where m is maximum depth.",
+                "BFS guarantees shortest path (number of steps); DFS finds a solution quickly but not necessarily shortest.",
+                "BFS suited for shallow solutions; DFS suited for deep trees with limited memory."
+            ],
+            application: "GPS navigation: BFS finds shortest route in unweighted graphs; DFS used in puzzle solving (e.g., maze) where memory is constrained."
+        },
+        { 
+            id: 4, category: "search", type: "Explain", 
+            title: "Explain the A* Search Algorithm and its optimality condition.",
+            points: [
+                "A* uses evaluation function f(n) = g(n) + h(n) where g = path cost from start, h = heuristic estimate to goal.",
+                "It expands nodes with lowest f(n) using a priority queue.",
+                "A* is complete and optimal if the heuristic h(n) is admissible (never overestimates true cost).",
+                "Consistency (monotonicity) ensures efficiency: h(n) ≤ c(n,n') + h(n').",
+                "A* is more efficient than uninformed search but may use significant memory.",
+                "Common heuristics: Manhattan distance for grid, straight-line distance for maps."
+            ],
+            application: "Used in Google Maps for route finding with real-time traffic (heuristic = estimated travel time). A* finds optimal path faster than Dijkstra."
+        },
+        { 
+            id: 5, category: "kr", type: "Explain", 
+            title: "Explain Knowledge Representation (KR) and its importance in AI.",
+            points: [
+                "KR is the field of encoding real-world facts, beliefs, and rules in formal structures for reasoning.",
+                "Good KR must be representationally adequate (express needed knowledge) and inferentially adequate.",
+                "KR enables machines to reason, solve problems, and learn from knowledge bases.",
+                "Common KR schemes: semantic networks, frames, production rules, and logic (propositional/FOL).",
+                "KR supports inheritance, default reasoning, and handling of exceptions.",
+                "Without KR, AI systems cannot store or manipulate domain knowledge effectively."
+            ],
+            application: "Medical diagnosis system (e.g., MYCIN) uses production rules (IF-THEN) to represent physician knowledge and infer diseases from symptoms."
+        },
+        { 
+            id: 6, category: "kr", type: "Differentiate", 
+            title: "Differentiate between Semantic Networks and Frames as KR schemes.",
+            points: [
+                "Semantic networks use graph structures (nodes for concepts, arcs for relationships); frames use slot-filler structures.",
+                "Semantic networks emphasize inheritance hierarchies (is-a, part-of); frames organize knowledge around objects with attributes.",
+                "Frames support default values and attached procedures (demons); semantic nets primarily support taxonomic reasoning.",
+                "Semantic nets are more visual and intuitive; frames are more modular and closer to object-oriented programming.",
+                "Inference in semantic nets uses graph traversal; frames use slot filling and inheritance.",
+                "Both can represent similar knowledge but frames handle complex objects with procedural attachments better."
+            ],
+            application: "Semantic net used in WordNet (lexical database). Frames used in natural language understanding (e.g., SHRDLU blocks world)."
+        },
+        { 
+            id: 7, category: "logic", type: "Explain", 
+            title: "Explain First-Order Logic (FOL) and its advantages over Propositional Logic.",
+            points: [
+                "FOL introduces objects, predicates, functions, and quantifiers (∀, ∃) for expressive power.",
+                "Propositional logic only handles atomic true/false statements with connectives (∧, ∨, ¬, →).",
+                "FOL can represent relationships: 'All humans are mortal' = ∀x Human(x) → Mortal(x).",
+                "FOL enables reasoning about individuals, properties, and relations; propositional logic cannot.",
+                "FOL is undecidable but semi-decidable; propositional logic is decidable (truth tables).",
+                "FOL forms the basis for logic programming (Prolog) and semantic web ontologies."
+            ],
+            application: "Prolog programming language uses FOL for rule-based systems: parent(X,Y) :- father(X,Y); ancestor(X,Z) :- parent(X,Y), ancestor(Y,Z)."
+        },
+        { 
+            id: 8, category: "logic", type: "Explain", 
+            title: "Explain Resolution Refutation in Propositional Logic.",
+            points: [
+                "Resolution refutation proves a statement by contradiction: negate the goal and derive empty clause.",
+                "Convert all statements to Conjunctive Normal Form (CNF) — conjunction of clauses (disjunctions).",
+                "Resolution rule: (P ∨ Q) and (¬P ∨ R) resolve to (Q ∨ R).",
+                "Repeatedly apply resolution until empty clause (⊥) is derived, indicating contradiction.",
+                "If empty clause derived, original goal must be true (proof by contradiction).",
+                "Resolution is sound and refutation-complete for propositional and first-order logic."
+            ],
+            application: "Used in automated theorem provers (e.g., Vampire, E-prover) to verify logical consistency and prove mathematical theorems."
+        },
+        { 
+            id: 9, category: "ml", type: "Differentiate", 
+            title: "Differentiate between Supervised and Unsupervised Machine Learning.",
+            points: [
+                "Supervised uses labeled data (input-output pairs); unsupervised uses unlabeled data only.",
+                "Supervised goal: learn mapping from input to output; unsupervised goal: discover hidden patterns/structure.",
+                "Supervised tasks: classification and regression; unsupervised tasks: clustering and association.",
+                "Supervised requires ground truth labels (expensive); unsupervised no labeling cost.",
+                "Evaluation: supervised uses accuracy/precision/recall; unsupervised uses silhouette score, inertia.",
+                "Examples: Supervised → spam detection; Unsupervised → customer segmentation."
+            ],
+            application: "E-commerce: Supervised predicts if user will purchase (binary); Unsupervised clusters users into segments (budget, luxury) for targeted marketing."
+        },
+        { 
+            id: 10, category: "ml", type: "Explain", 
+            title: "Explain Overfitting in Machine Learning and how to prevent it.",
+            points: [
+                "Overfitting occurs when model learns training data too well, including noise and irrelevant patterns.",
+                "Model performs excellently on training data but poorly on unseen test data (poor generalization).",
+                "Causes: model too complex (too many parameters), insufficient training data, or lack of regularization.",
+                "Signs: training accuracy very high but validation accuracy significantly lower.",
+                "Prevention methods: cross-validation, regularization (L1/L2), pruning (decision trees), more data, early stopping.",
+                "Bias-variance tradeoff: overfitting corresponds to low bias but high variance."
+            ],
+            application: "Image classification: deep net with millions of parameters on 500 images → overfits; use dropout, data augmentation, and validation monitoring."
+        },
+        { 
+            id: 11, category: "compare", type: "Differentiate", 
+            title: "Differentiate between Precision and Recall in Classification Evaluation.",
+            points: [
+                "Precision = TP / (TP + FP) — of predicted positives, how many are actually correct.",
+                "Recall = TP / (TP + FN) — of actual positives, how many were correctly identified.",
+                "Precision focuses on false positives (avoiding false alarms); recall focuses on false negatives (avoiding misses).",
+                "High precision but low recall → many false negatives; High recall but low precision → many false positives.",
+                "F1 Score = harmonic mean of precision and recall: 2*(P*R)/(P+R) balances both.",
+                "Choose metric based on cost: cancer detection → high recall; spam filter → high precision."
+            ],
+            application: "Spam filter: high precision means few legitimate emails marked spam (user trust); high recall means catching most spam emails."
+        },
+        { 
+            id: 12, category: "search", type: "Explain", 
+            title: "Explain Heuristic Functions and Admissible Heuristics in Informed Search.",
+            points: [
+                "Heuristic function h(n) estimates cost from current state n to goal state.",
+                "Heuristics guide search by prioritizing nodes that appear closer to goal.",
+                "Admissible heuristic never overestimates true cost to goal (optimistic estimate).",
+                "Admissible heuristic ensures A* search is optimal (finds minimum cost path).",
+                "Consistent (monotonic) heuristic: h(n) ≤ c(n,n') + h(n') for all edges.",
+                "Examples: Manhattan distance (admissible for grid), straight-line distance (admissible for maps)."
+            ],
+            application: "8-puzzle: Manhattan distance (sum of tile distances) is admissible and used to solve puzzle optimally with A*."
+        },
+        { 
+            id: 13, category: "agents", type: "Explain", 
+            title: "Explain the PEAS Framework for Agent Design.",
+            points: [
+                "PEAS = Performance measure, Environment, Actuators, Sensors — describes task environment.",
+                "Performance measure: criteria for agent success (safety, speed, accuracy).",
+                "Environment: everything the agent interacts with (roads, users, network).",
+                "Actuators: mechanisms to affect environment (wheels, arms, speakers).",
+                "Sensors: devices to perceive environment (cameras, microphones, GPS).",
+                "PEAS helps systematically design agents and compare different agent types."
+            ],
+            application: "Autonomous taxi: Performance = safety, fuel efficiency, passenger comfort; Environment = roads, traffic, pedestrians; Actuators = steering, brakes; Sensors = cameras, LiDAR, GPS."
+        },
+        { 
+            id: 14, category: "compare", type: "Differentiate", 
+            title: "Differentiate between Goal-Based Agents and Utility-Based Agents.",
+            points: [
+                "Goal-based agents have binary satisfaction: goal achieved or not (e.g., reach destination).",
+                "Utility-based agents assign continuous happiness values to states (e.g., 0.7 comfortable, 0.9 fast).",
+                "Goal-based cannot compare different goal states; utility-based can rank outcomes.",
+                "Utility agents handle trade-offs between conflicting objectives (speed vs safety).",
+                "Goal-based simpler to implement; utility-based more flexible but requires utility function.",
+                "Examples: Goal-based = maze solver; Utility-based = self-driving car balancing multiple factors."
+            ],
+            application: "Self-driving car: goal-based would just reach destination; utility-based considers speed, fuel, safety, passenger comfort → better overall."
+        },
+        { 
+            id: 15, category: "ml", type: "Explain", 
+            title: "Explain the Bias-Variance Tradeoff in Machine Learning.",
+            points: [
+                "Bias: error from wrong assumptions (underfitting) → model too simple.",
+                "Variance: sensitivity to training data fluctuations (overfitting) → model too complex.",
+                "Total error = Bias² + Variance + Irreducible error (noise).",
+                "Simple models (linear regression) have high bias, low variance; complex models (deep nets) have low bias, high variance.",
+                "Goal: find optimal complexity minimizing total error (sweet spot).",
+                "Cross-validation helps detect bias-variance issues and select model complexity."
+            ],
+            application: "Polynomial regression: degree 1 (high bias, underfit); degree 10 (high variance, overfit); degree 3 (optimal balance)."
+        },
+        { 
+            id: 16, category: "logic", type: "Explain", 
+            title: "Explain Modus Ponens and Modus Tollens with Examples.",
+            points: [
+                "Modus Ponens: If P→Q is true and P is true, then Q is true. (forward reasoning)",
+                "Modus Tollens: If P→Q is true and Q is false, then P is false. (backward reasoning)",
+                "Modus Ponens example: If raining → ground wet; raining → ground wet.",
+                "Modus Tollens example: If raining → ground wet; ground not wet → not raining.",
+                "Both are sound inference rules used in expert systems and logic programming.",
+                "They form building blocks for forward chaining (Modus Ponens) and backward chaining (Modus Tollens)."
+            ],
+            application: "Medical expert system: IF fever AND cough → flu (Modus Ponens); IF NOT flu → NOT (fever AND cough) (Modus Tollens for diagnosis elimination)."
+        },
+        { 
+            id: 17, category: "search", type: "Explain", 
+            title: "Explain Uniform Cost Search (UCS) and its properties.",
+            points: [
+                "UCS expands node with lowest path cost g(n) (not depth like BFS).",
+                "Uses priority queue ordered by cumulative cost from start.",
+                "UCS is complete and optimal for any positive step costs (unlike BFS which requires uniform costs).",
+                "Time complexity O(b^(1+⌊C*/ε⌋)) where C* is optimal cost, ε minimum step cost.",
+                "UCS is equivalent to Dijkstra's algorithm for graphs.",
+                "UCS can be inefficient for large search spaces but guarantees optimality."
+            ],
+            application: "Flight booking: find cheapest route (cost = ticket price) not shortest path. UCS finds minimal cost itinerary."
+        },
+        { 
+            id: 18, category: "ml", type: "Differentiate", 
+            title: "Differentiate between Classification and Regression in Machine Learning.",
+            points: [
+                "Classification predicts discrete class labels (e.g., spam/ham, cat/dog).",
+                "Regression predicts continuous numerical values (e.g., price, temperature, age).",
+                "Classification uses accuracy, precision, recall, F1 for evaluation.",
+                "Regression uses MSE, MAE, R-squared for evaluation.",
+                "Classification algorithms: Logistic Regression, SVM, Decision Trees, Random Forest.",
+                "Regression algorithms: Linear Regression, Ridge, Lasso, SVR, Neural Networks with linear output."
+            ],
+            application: "Real estate: Regression predicts house price ($300k). Classification predicts if house will sell within 30 days (Yes/No)."
+        }
+    ];
+
+    let activeCategory = "all";
+
+    function renderFilters() {
+        const filterBar = document.getElementById("filterBar");
+        const categories = ["all", "agents", "search", "kr", "logic", "ml", "compare"];
+        const displayNames = {
+            all: "📚 All Topics",
+            agents: "🤖 Agents & PEAS",
+            search: "🔍 Search & Heuristics",
+            kr: "📚 Knowledge Rep",
+            logic: "🔣 Logic & Reasoning",
+            ml: "📊 Machine Learning",
+            compare: "⚖️ Compare/Contrast"
+        };
+        filterBar.innerHTML = categories.map(cat => `
+            <button class="filter-btn ${activeCategory === cat ? 'active' : ''}" data-category="${cat}">${displayNames[cat]}</button>
+        `).join("");
+        
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                activeCategory = btn.getAttribute("data-category");
+                renderFilters();
+                renderQuestions();
+            });
+        });
+    }
+
+    function renderQuestions() {
+        const grid = document.getElementById("questionsGrid");
+        let filtered = questionsData;
+        if (activeCategory !== "all") {
+            filtered = questionsData.filter(q => q.category === activeCategory);
+        }
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:2rem; background:white; border-radius:1.5rem;">✨ No questions in this category. Try another filter! ✨</div>`;
+            return;
+        }
+        
+        grid.innerHTML = filtered.map(q => `
+            <div class="question-card" data-id="${q.id}">
+                <div class="card-header">
+                    <div class="question-type">📌 ${q.type} Question</div>
+                    <div class="question-text">${escapeHtml(q.title)}</div>
+                </div>
+                <div class="card-body">
+                    <div class="category-tag">🏷️ ${q.category.toUpperCase()}</div>
+                    <div class="points-container">
+                        <ul class="point-list">
+                            ${q.points.map((point, idx) => `
+                                <li><span class="point-num">${idx+1}</span> <span>${escapeHtml(point)}</span></li>
+                            `).join('')}
+                        </ul>
+                        <div class="application-box">
+                            <div class="application-title">🚀 REAL-WORLD APPLICATION / EXAMPLE</div>
+                            <div style="font-size:0.85rem; margin-top:0.3rem;">${escapeHtml(q.application)}</div>
+                        </div>
+                    </div>
+                    <div class="expand-hint">🔽 Click to expand / collapse (${q.points.length}+ key points)</div>
+                </div>
+            </div>
+        `).join("");
+        
+        // Add click-to-expand functionality
+        document.querySelectorAll(".question-card").forEach(card => {
+            card.addEventListener("click", (e) => {
+                // Prevent toggling when clicking on interactive elements inside (none here, but safe)
+                if (e.target.tagName === 'BUTTON') return;
+                card.classList.toggle("expanded");
+            });
+        });
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Initialize
+    renderFilters();
+    renderQuestions();
+</script>
+</body>
+</html>

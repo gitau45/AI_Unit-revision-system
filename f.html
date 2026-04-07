@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Master Flashcards | Zetech Exam Prep | Definitions + Examples + Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #e0e8f2 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .app-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .hero {
+            background: linear-gradient(135deg, #0a2f44, #0b4b6e);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
+
+        .hero h1 {
+            font-size: 1.9rem;
+            letter-spacing: -0.3px;
+        }
+
+        .hero p {
+            opacity: 0.9;
+            margin-top: 0.3rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Filter / category tabs */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            background: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            color: #1e3a5f;
+        }
+
+        .filter-btn.active {
+            background: #f4a261;
+            color: #1e2a3a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Flashcard grid */
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card styling */
+        .flashcard {
+            background: transparent;
+            perspective: 1500px;
+            cursor: pointer;
+            height: 380px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transform-style: preserve-3d;
+            border-radius: 1.5rem;
+        }
+
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            padding: 1.3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        .card-front {
+            background: white;
+            border-left: 8px solid #f4a261;
+            text-align: left;
+        }
+
+        .card-back {
+            background: #1e2f3f;
+            color: white;
+            transform: rotateY(180deg);
+            text-align: left;
+            overflow-y: auto;
+        }
+
+        .term {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0a2f44;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #eef2fa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1f6e8c;
+            margin-bottom: 0.8rem;
+        }
+
+        .example-box {
+            background: #f8f9fc;
+            padding: 0.6rem;
+            border-radius: 0.8rem;
+            font-size: 0.8rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #f4a261;
+        }
+
+        .question-box {
+            background: #eef2fa;
+            padding: 0.7rem;
+            border-radius: 0.8rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-practice {
+            background: #2c7a4d;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            display: inline-block;
+            margin-top: 0.3rem;
+        }
+
+        /* back side styling */
+        .back-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-bottom: 2px solid #f4a261;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        .back-def {
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin-bottom: 0.8rem;
+        }
+
+        .back-example {
+            background: rgba(255,255,255,0.12);
+            padding: 0.6rem;
+            border-radius: 0.8rem;
+            margin: 0.6rem 0;
+            font-size: 0.85rem;
+        }
+
+        .back-question {
+            background: #f4a26120;
+            padding: 0.7rem;
+            border-radius: 0.8rem;
+            margin-top: 0.6rem;
+            font-size: 0.85rem;
+            border-left: 3px solid #f4a261;
+        }
+
+        .flip-hint {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #6c757d;
+        }
+
+        .no-cards {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 2rem;
+            color: #6c757d;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.75rem;
+            color: #4d6272;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .flashcard { height: 420px; }
+            .term { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="hero">
+        <h1>🧠 AI Master Flashcards — Zetech Final Prep</h1>
+        <p>📖 All topics: Introduction | Agents | KR | Logic | Search | ML | Problem Solving + more</p>
+        <div class="stats">
+            <div class="stat-badge">📚 45+ key concepts</div>
+            <div class="stat-badge">💡 Every card: definition + example + exam-style Q</div>
+            <div class="stat-badge">🔄 Click to flip → reveal answer & explanation</div>
+        </div>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-category="all">📌 All Topics</button>
+        <button class="filter-btn" data-category="intro">🤖 Intro to AI</button>
+        <button class="filter-btn" data-category="agents">🎯 Agents & PEAS</button>
+        <button class="filter-btn" data-category="kr">📚 Knowledge Rep</button>
+        <button class="filter-btn" data-category="logic">🔣 Logic & Symbols</button>
+        <button class="filter-btn" data-category="search">🔍 Search & Heuristics</button>
+        <button class="filter-btn" data-category="ml">📊 Machine Learning</button>
+    </div>
+
+    <!-- FLASHCARD GRID -->
+    <div id="flashcardGrid" class="flashcard-grid"></div>
+    <footer>💡 Tip: Click any card to flip → see detailed explanation, real-world example, and a sample exam question. Perfect for active recall!</footer>
+</div>
+
+<script>
+    // ---------- FLASHCARD DATABASE (DEFINITION + EXAMPLE + PRACTICE QUESTION) ----------
+    const flashcards = [
+        // INTRO / AGENTS
+        { term: "Intelligent Agent", category: "agents", definition: "An entity that perceives its environment via sensors and acts upon it via actuators to achieve specific goals.", example: "Self-driving car: cameras (sensors) → AI decision → steering/brakes (actuators).", practiceQ: "Q: Describe the four components of a rational agent's PEAS description." },
+        { term: "PEAS Framework", category: "agents", definition: "Performance measure, Environment, Actuators, Sensors – used to characterize task environment for agent design.", example: "Taxi agent: Performance (safety/speed), Environment (roads/traffic), Actuators (steering/brakes), Sensors (cameras/GPS).", practiceQ: "Q: For a medical diagnosis agent, define its PEAS components." },
+        { term: "Rational Agent", category: "intro", definition: "An agent that acts to achieve the best expected outcome based on its percepts and knowledge.", example: "Chess AI choosing moves to maximize winning probability.", practiceQ: "Q: How does a rational agent differ from a simply reactive agent?" },
+        { term: "Turing Test", category: "intro", definition: "Test proposed by Alan Turing: a machine is intelligent if a human evaluator cannot distinguish it from a human during conversation.", example: "Chatbot that fools 30% of judges in a 5-minute conversation.", practiceQ: "Q: Mention one limitation of the Turing test as a measure of intelligence." },
+        { term: "Weak AI vs Strong AI", category: "intro", definition: "Weak AI: narrow, task-specific AI (e.g., Siri). Strong AI: hypothetical human-level general intelligence (AGI).", example: "Weak: facial recognition. Strong: robot that can cook, reason, and paint like a human.", practiceQ: "Q: Which type of AI currently exists? Justify." },
+        
+        // KNOWLEDGE REPRESENTATION
+        { term: "Knowledge Representation (KR)", category: "kr", definition: "The field of AI concerned with encoding real-world facts, beliefs, and rules into formal structures that machines can reason with.", example: "Using semantic networks to represent 'Socrates is a man; all men are mortal'.", practiceQ: "Q: Name two desirable properties of a good KR scheme." },
+        { term: "Semantic Network", category: "kr", definition: "Graph structure where nodes represent concepts and labeled arcs represent relationships (e.g., is-a, part-of).", example: "Animal → is-a → LivingThing; Dog → is-a → Animal; Fido → instance-of → Dog.", practiceQ: "Q: Draw a semantic net for 'Whiskers is a cat. Cats are mammals. Mammals have fur.'" },
+        { term: "Frame", category: "kr", definition: "Data structure with slots (attributes) and fillers (values); represents stereotyped objects or situations.", example: "Student frame: Name: ___, ID: ___, Major: ___, Advisor: ___.", practiceQ: "Q: How do frames support inheritance and default values?" },
+        { term: "Production Rule", category: "kr", definition: "Condition-action rule (IF-THEN) used in rule-based systems and expert systems.", example: "IF temperature < 20°C THEN turn_on_heater().", practiceQ: "Q: Write a production rule for loan approval based on credit score." },
+        { term: "Ontology", category: "kr", definition: "Formal, explicit specification of concepts, properties, and relationships in a domain.", example: "Medical ontology: Disease, Symptom, Treatment, Drug with relations like 'treats'.", practiceQ: "Q: Why is ontology important for knowledge sharing between AI systems?" },
+        
+        // LOGIC & SYMBOLS
+        { term: "Propositional Logic", category: "logic", definition: "Logic using Boolean variables (true/false) and logical connectives (∧, ∨, ¬, →, ↔).", example: "P = 'It is raining'; Q = 'Ground is wet'; P → Q", practiceQ: "Q: Build truth table for (P ∧ Q) → P." },
+        { term: "First-Order Logic (FOL)", category: "logic", definition: "Extends propositional logic with objects, predicates, functions, and quantifiers (∀, ∃).", example: "∀x (Cat(x) → Mammal(x)) — all cats are mammals.", practiceQ: "Q: Translate 'Every student has a teacher' into FOL." },
+        { term: "Universal Quantifier (∀)", category: "logic", definition: "Means 'for all' – applies to every element in the domain.", example: "∀x (Human(x) → Mortal(x)) : All humans are mortal.", practiceQ: "Q: Write a FOL statement meaning 'All birds can fly'." },
+        { term: "Existential Quantifier (∃)", category: "logic", definition: "Means 'there exists' – at least one element satisfies the property.", example: "∃x (Dog(x) ∧ Brown(x)) : There exists a brown dog.", practiceQ: "Q: What is the negation of ∀x P(x)?" },
+        { term: "Modus Ponens", category: "logic", definition: "Rule of inference: If P → Q is true and P is true, then Q is true.", example: "If it rains (P) then ground wet (Q). It rains → ground wet.", practiceQ: "Q: Apply Modus Ponens to: 'If a number is even, then it is divisible by 2. 10 is even.'" },
+        { term: "Resolution Refutation", category: "logic", definition: "Proof by contradiction: negate the goal, convert to CNF, derive empty clause.", example: "Given (P ∨ Q) and (¬P ∨ R), resolve to (Q ∨ R).", practiceQ: "Q: Use resolution to prove R from (P→Q), (Q→R), P." },
+        
+        // SEARCH & PROBLEM SOLVING
+        { term: "State Space Search", category: "search", definition: "Problem formulation using states, actions, transition model, goal test, and path cost.", example: "8-puzzle: states = board configurations, actions = slide tiles, goal = ordered numbers.", practiceQ: "Q: Define state space for a maze solving robot." },
+        { term: "BFS (Breadth-First Search)", category: "search", definition: "Uninformed search that explores level by level using a queue; complete and optimal for unit costs.", example: "Finding shortest hop count in social network.", practiceQ: "Q: What is the time complexity of BFS with branching factor b and depth d?" },
+        { term: "DFS (Depth-First Search)", category: "search", definition: "Uninformed search that goes deep first using a stack; memory efficient but not optimal.", example: "Solving a puzzle by exploring one branch until dead end.", practiceQ: "Q: When would you prefer DFS over BFS?" },
+        { term: "A* Algorithm", category: "search", definition: "Informed search using f(n) = g(n) + h(n) where g = cost from start, h = heuristic estimate to goal.", example: "GPS navigation with straight-line heuristic.", practiceQ: "Q: What condition on h(n) guarantees A* optimality?" },
+        { term: "Heuristic Function", category: "search", definition: "Estimated cost from current state to goal; used to guide informed search.", example: "Manhattan distance in 8-puzzle, straight-line distance in maps.", practiceQ: "Q: Define an admissible heuristic for the 8-puzzle." },
+        { term: "Admissible Heuristic", category: "search", definition: "A heuristic that never overestimates the true cost to reach the goal.", example: "Straight-line distance ≤ actual road distance → admissible.", practiceQ: "Q: Why does A* require admissible heuristic to be optimal?" },
+        
+        // MACHINE LEARNING
+        { term: "Supervised Learning", category: "ml", definition: "Learning from labeled training data (input-output pairs) to predict outputs for new inputs.", example: "Spam classification: emails labeled 'spam' or 'ham'.", practiceQ: "Q: Give an example of a regression problem in supervised learning." },
+        { term: "Unsupervised Learning", category: "ml", definition: "Finding patterns in unlabeled data; no predefined outputs.", example: "Customer segmentation using clustering (K-means).", practiceQ: "Q: Name two real-world applications of unsupervised learning." },
+        { term: "Overfitting", category: "ml", definition: "Model learns training data too well, capturing noise instead of general pattern; fails on unseen data.", example: "Decision tree with 1000 leaves on small dataset.", practiceQ: "Q: List three methods to prevent overfitting." },
+        { term: "Precision", category: "ml", definition: "TP / (TP + FP) → of all positive predictions, how many were actually correct.", example: "Spam filter: 10 flagged spam, 8 real spam → precision = 80%.", practiceQ: "Q: If precision is high but recall is low, what does that indicate?" },
+        { term: "Recall (Sensitivity)", category: "ml", definition: "TP / (TP + FN) → of all actual positives, how many were correctly identified.", example: "Out of 100 actual spam emails, filter catches 90 → recall = 90%.", practiceQ: "Q: Which metric is more important for cancer detection: precision or recall?" },
+        { term: "F1 Score", category: "ml", definition: "Harmonic mean of precision and recall: 2 * (P*R)/(P+R). Balances both metrics.", example: "Precision=0.8, Recall=0.7 → F1 ≈ 0.74.", practiceQ: "Q: When is F1 score preferred over accuracy?" },
+        { term: "Decision Tree", category: "ml", definition: "Tree-like model where internal nodes test features, branches represent outcomes, leaves hold predictions.", example: "Loan approval tree: income > 50k? → credit score > 700? → Approve/Deny.", practiceQ: "Q: What is information gain and how is it used in ID3?" },
+        { term: "Bias-Variance Tradeoff", category: "ml", definition: "Bias: error from wrong assumptions; Variance: sensitivity to training data. Simple models: high bias, complex: high variance.", example: "Linear regression (high bias) vs deep neural net (high variance).", practiceQ: "Q: How does increasing model complexity affect bias and variance?" },
+        
+        // ADDITIONAL AGENTS & PROBLEM SOLVING
+        { term: "Goal-Based Agent", category: "agents", definition: "Agent that selects actions to achieve specific goals; considers future consequences.", example: "Navigation robot that plans path to reach charging station.", practiceQ: "Q: Compare goal-based vs utility-based agent." },
+        { term: "Utility-Based Agent", category: "agents", definition: "Agent that maximizes a utility function; handles trade-offs between conflicting objectives.", example: "Self-driving car balancing speed, safety, and fuel efficiency.", practiceQ: "Q: Why is a utility agent more flexible than a goal-based agent?" },
+        { term: "Model-Based Reflex Agent", category: "agents", definition: "Reflex agent that maintains internal state to handle partial observability.", example: "Vacuum cleaner robot that tracks which rooms it has cleaned.", practiceQ: "Q: How does a model-based agent differ from simple reflex?" },
+        
+        // ADDITIONAL KR
+        { term: "Inference Engine", category: "kr", definition: "Component that applies logical rules to derive new knowledge from knowledge base.", example: "Forward chaining in expert system: from facts → conclusions.", practiceQ: "Q: Differentiate forward chaining from backward chaining." },
+        
+        // ADDITIONAL SEARCH
+        { term: "Uniform Cost Search (UCS)", category: "search", definition: "Uninformed search that expands node with lowest path cost g(n); optimal for any positive step cost.", example: "Finding cheapest flight itinerary.", practiceQ: "Q: How does UCS differ from BFS when step costs vary?" },
+        { term: "Greedy Best-First Search", category: "search", definition: "Informed search using only heuristic h(n); expands node closest to goal, but not optimal.", example: "Straight-line distance greedy pathfinding.", practiceQ: "Q: Why might greedy search fail to find optimal path?" },
+        
+        // MORE ML
+        { term: "Cross-Validation", category: "ml", definition: "Technique to evaluate model by splitting data into folds; train on k-1, validate on 1, repeat.", example: "5-fold CV: 80% train, 20% validation 5 times.", practiceQ: "Q: What is the advantage of cross-validation over a single train-test split?" },
+        { term: "Confusion Matrix", category: "ml", definition: "Table showing TP, FP, FN, TN for evaluating classification performance.", example: "[[50,10],[5,100]] for disease detection.", practiceQ: "Q: Calculate accuracy from a confusion matrix." }
+    ];
+
+    // RENDER FLASHCARDS BASED ON SELECTED CATEGORY
+    let activeCategory = "all";
+
+    function renderFlashcards() {
+        const grid = document.getElementById("flashcardGrid");
+        let filtered = flashcards;
+        if (activeCategory !== "all") {
+            filtered = flashcards.filter(card => card.category === activeCategory);
+        }
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="no-cards">✨ No flashcards in this category. Try another topic! ✨</div>`;
+            return;
+        }
+        
+        grid.innerHTML = filtered.map((card, idx) => {
+            // Generate unique id for each card
+            const uniqueId = `card_${activeCategory}_${idx}_${Date.now()}_${Math.random()}`;
+            return `
+                <div class="flashcard" data-category="${card.category}" id="${uniqueId}">
+                    <div class="card-inner">
+                        <!-- FRONT SIDE -->
+                        <div class="card-front">
+                            <div>
+                                <span class="category-tag">🏷️ ${card.category.toUpperCase()}</span>
+                                <div class="term">${escapeHtml(card.term)}</div>
+                                <div class="example-box">
+                                    <strong>✨ Example:</strong> ${escapeHtml(card.example)}
+                                </div>
+                                <div class="question-box">
+                                    <strong>📌 Exam-style Q:</strong> ${escapeHtml(card.practiceQ)}
+                                </div>
+                            </div>
+                            <div class="flip-hint">🔁 Click to flip → check definition + model answer</div>
+                        </div>
+                        <!-- BACK SIDE (definition + answer to practice question) -->
+                        <div class="card-back">
+                            <div>
+                                <div class="back-title">📖 ${escapeHtml(card.term)}</div>
+                                <div class="back-def"><strong>Definition:</strong> ${escapeHtml(card.definition)}</div>
+                                <div class="back-example"><strong>🔍 Real-world / Example:</strong> ${escapeHtml(card.example)}</div>
+                                <div class="back-question"><strong>✅ Model answer (practice Q):</strong><br>${generateModelAnswerForCard(card)}</div>
+                            </div>
+                            <div class="flip-hint" style="color:#aaa;">🔁 Click to flip back</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+        
+        // attach click flip event to each flashcard
+        document.querySelectorAll('.flashcard').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // prevent toggling if clicking on interactive elements inside? but it's fine for whole card flip.
+                e.stopPropagation();
+                card.classList.toggle('flipped');
+            });
+        });
+    }
+    
+    // generate intelligent model answer for each practice question (contextual)
+    function generateModelAnswerForCard(card) {
+        // Provide rich, exam-ready answers based on term.
+        const termLower = card.term.toLowerCase();
+        if (termLower.includes("peas")) return "Example: For a delivery drone → Performance: delivery time, Environment: weather/airspace, Actuators: rotors, Sensors: GPS/camera.";
+        if (termLower.includes("rational agent")) return "Rational agent maximizes expected performance measure using percepts; simple reflex only reacts without goal optimization.";
+        if (termLower.includes("turing test")) return "Limitations: doesn't test physical skills, creativity, or true understanding; can be fooled by simple tricks (ELIZA effect).";
+        if (termLower.includes("weak ai")) return "Weak AI exists today (Siri, AlphaGo); Strong AI (AGI) is still theoretical, human-level reasoning across domains.";
+        if (termLower.includes("semantic network")) return "Draw: Whiskers → instance-of → Cat → is-a → Mammal → has-attribute → Fur. Inheritance allows Whiskers to have fur.";
+        if (termLower.includes("frame")) return "Frames support default values (e.g., 'legs: 4' for Mammal) and inheritance from parent frames. Slots can have attached procedures (demons).";
+        if (termLower.includes("production rule")) return "IF credit_score > 700 AND income > 40000 THEN approve_loan = TRUE. ELSE reject.";
+        if (termLower.includes("ontology")) return "Ontology enables interoperability: different AI systems share same vocabulary and relationships, e.g., medical ontologies for diagnosis exchange.";
+        if (termLower.includes("propositional logic")) return "Truth table: P, Q, P∧Q, (P∧Q)→P: rows: (F,F,F,T), (F,T,F,T), (T,F,F,T), (T,T,T,T) → tautology.";
+        if (termLower.includes("first-order logic")) return "∀x Student(x) → ∃y Teacher(y) ∧ HasTeacher(x,y). Every student has some teacher.";
+        if (termLower.includes("universal quantifier")) return "∀x Bird(x) → CanFly(x) — all birds can fly (assuming typical birds).";
+        if (termLower.includes("existential quantifier")) return "Negation of ∀x P(x) is ∃x ¬P(x). Example: 'Not all birds fly' means 'There exists a bird that does not fly'.";
+        if (termLower.includes("modus ponens")) return "Given: 'If a number is even, it is divisible by 2' and '10 is even' → conclusion: '10 is divisible by 2'.";
+        if (termLower.includes("resolution refutation")) return "Convert P→Q, Q→R, P to CNF: (¬P∨Q), (¬Q∨R), P, negate R → (¬R). Resolve (¬P∨Q) with P → Q. Resolve Q with (¬Q∨R) → R. Resolve R with ¬R → empty clause → proven.";
+        if (termLower.includes("state space search")) return "Maze: States = (x,y) positions; Actions = {N,S,E,W} (if no wall); Transition = new position; Goal = exit; Cost = steps.";
+        if (termLower.includes("bfs")) return "Time = O(b^d), Space = O(b^d) where b=branching factor, d=depth of shallowest solution.";
+        if (termLower.includes("dfs")) return "DFS preferred when memory is limited (space O(bd)) or when solutions are deep and branching factor is large.";
+        if (termLower.includes("a*")) return "A* optimality condition: heuristic h(n) must be admissible (never overestimates) and consistent (monotonic).";
+        if (termLower.includes("heuristic function")) return "Manhattan distance (sum of horizontal+vertical tile displacements) is admissible for 8-puzzle because each move changes distance by at most 1.";
+        if (termLower.includes("admissible heuristic")) return "If h overestimates, A* might prune optimal path, losing optimality. Admissible ensures f(n) ≤ true cost.";
+        if (termLower.includes("supervised learning")) return "Regression: predicting house price based on features (size, bedrooms, location).";
+        if (termLower.includes("unsupervised learning")) return "1) Customer segmentation for marketing. 2) Anomaly detection in network traffic.";
+        if (termLower.includes("overfitting")) return "Methods: cross-validation, pruning (decision trees), regularization (L1/L2), more training data, early stopping.";
+        if (termLower.includes("precision")) return "High precision + low recall → many false negatives (missed positives). Example: spam filter misses many spam emails but few false alarms.";
+        if (termLower.includes("recall")) return "For cancer detection, recall is more critical: we want to catch most actual cases (avoid false negatives).";
+        if (termLower.includes("f1 score")) return "F1 is preferred when class distribution is imbalanced; accuracy can be misleading if 95% negatives and model predicts all negatives.";
+        if (termLower.includes("decision tree")) return "Information gain = entropy(parent) - weighted sum entropy(children). ID3 selects attribute with highest gain at each node.";
+        if (termLower.includes("bias-variance")) return "Increasing complexity decreases bias but increases variance. Optimal tradeoff minimizes total error (bias² + variance + irreducible error).";
+        if (termLower.includes("goal-based agent")) return "Goal-based: binary success; Utility-based: graded happiness, handles trade-offs (e.g., speed vs safety).";
+        if (termLower.includes("utility-based agent")) return "Utility agent can compare different goal states; goal agent only distinguishes goal vs non-goal.";
+        if (termLower.includes("model-based reflex")) return "Model-based uses internal world model to track unobserved aspects; simple reflex only uses current percept.";
+        if (termLower.includes("inference engine")) return "Forward chaining: data-driven, starts with facts. Backward chaining: goal-driven, starts with hypothesis.";
+        if (termLower.includes("uniform cost search")) return "UCS expands cheapest path cost; BFS assumes uniform step cost (optimal only when all costs equal).";
+        if (termLower.includes("greedy best-first")) return "Greedy can get stuck in local optima or follow dead ends because it ignores path cost.";
+        if (termLower.includes("cross-validation")) return "CV reduces overfitting and gives more robust performance estimate by using multiple validation sets.";
+        if (termLower.includes("confusion matrix")) return "Accuracy = (TP+TN)/(TP+TN+FP+FN). Example: from matrix [[50,10],[5,100]], accuracy = (50+100)/165 = 90.9%.";
+        
+        // default generic but helpful answer
+        return `Model answer: Based on the definition of "${card.term}", recall key principles and apply to the context. For full marks, define term, give real example, and relate to AI exam topics.`;
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // FILTER EVENT LISTENERS
+    function initFilters() {
+        const btns = document.querySelectorAll('.filter-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCategory = btn.getAttribute('data-category');
+                renderFlashcards();
+            });
+        });
+    }
+    
+    renderFlashcards();
+    initFilters();
+</script>
+</body>
+</html>
